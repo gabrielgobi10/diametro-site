@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    scroll-behavior: smooth;
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+      Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    /* iPhone: reduz “saltos” de layout e evita overflow lateral */
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  /* iPhone: evita zoom automático ao focar inputs (regra crítica) */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
