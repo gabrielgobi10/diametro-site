@@ -30,14 +30,17 @@ export default function Header({ activeSection, onNavigate }: HeaderProps) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Fechar com ESC + bloquear scroll quando o menu está aberto
   useEffect(() => {
     if (!mobileMenuOpen) return;
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setMobileMenuOpen(false);
     };
+
     document.addEventListener("keydown", onKeyDown);
     document.body.style.overflow = "hidden";
+
     return () => {
       document.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = "";
@@ -52,18 +55,16 @@ export default function Header({ activeSection, onNavigate }: HeaderProps) {
   return (
     <header
       className={[
-        "fixed inset-x-0 top-0 z-50",
+        // Importante: header abaixo do drawer/overlay quando aberto
+        "fixed inset-x-0 top-0 z-30",
         "transition-all duration-300",
         scrolled
           ? "bg-white/90 backdrop-blur-xl border-b border-gray-200 shadow-[0_14px_40px_-28px_rgba(0,0,0,0.35)]"
           : "bg-white border-b border-transparent",
       ].join(" ")}
-      style={{
-        paddingTop: "env(safe-area-inset-top)",
-      }}
+      style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* altura responsiva */}
         <div className="h-[72px] lg:h-[88px] flex items-center justify-between">
           {/* Brand */}
           <button
@@ -145,6 +146,8 @@ export default function Header({ activeSection, onNavigate }: HeaderProps) {
               onClick={() => setMobileMenuOpen(true)}
               className="lg:hidden inline-flex items-center justify-center h-12 w-12 rounded-2xl border border-gray-200 bg-white hover:bg-gray-50 transition"
               aria-label="Abrir menu"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-drawer"
             >
               <Menu size={22} className="text-gray-800" />
             </button>
@@ -155,14 +158,20 @@ export default function Header({ activeSection, onNavigate }: HeaderProps) {
       {/* Mobile drawer */}
       {mobileMenuOpen && (
         <div className="lg:hidden">
+          {/* Overlay: z-40 para ficar por cima do site/header */}
           <button
-            className="fixed inset-0 bg-black/40 backdrop-blur-[2px]"
+            type="button"
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px]"
             onClick={() => setMobileMenuOpen(false)}
             aria-label="Fechar menu"
           />
 
+          {/* Drawer: z-50 para ficar acima do overlay */}
           <div
-            className="fixed right-0 top-0 h-full w-[88%] max-w-sm bg-white shadow-2xl border-l border-gray-200"
+            id="mobile-drawer"
+            role="dialog"
+            aria-modal="true"
+            className="fixed right-0 top-0 z-50 h-full w-[88%] max-w-sm bg-white shadow-2xl border-l border-gray-200"
             style={{
               paddingTop: "env(safe-area-inset-top)",
               paddingBottom: "env(safe-area-inset-bottom)",
