@@ -1,5 +1,13 @@
 import { useCallback } from "react";
-import { Phone, Mail, MapPin, Clock, MessageCircle } from "lucide-react";
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
+  MessageCircle,
+  Linkedin,
+  Instagram,
+} from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function Footer() {
@@ -11,6 +19,11 @@ export default function Footer() {
   const COMPANY_WA = "351939555074"; // wa.me (sem + e sem espaços)
   const COMPANY_EMAIL = "orcamentos@diametrocanalizacoes.com";
 
+  // Redes sociais
+  const COMPANY_LINKEDIN =
+    "https://www.linkedin.com/company/grupodiametro/?viewAsMember=true";
+  const COMPANY_INSTAGRAM = "https://www.instagram.com/grupodiametro/";
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -18,13 +31,11 @@ export default function Footer() {
     (section: string) => {
       const targetHash = `#${section}`;
 
-      // Se estiver fora da home, navega para a home com hash
       if (location.pathname !== "/") {
         navigate(`/${targetHash}`);
         return;
       }
 
-      // Se já estiver na home, faz scroll suave
       const el = document.getElementById(section);
       if (!el) return;
 
@@ -49,7 +60,8 @@ export default function Footer() {
               conformidade e cumprimento rigoroso de prazos.
             </p>
 
-            <div className="mt-5 flex flex-wrap gap-3">
+            {/* CTAs (menos ruído, mais foco) */}
+            <div className="mt-5 flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={() => goToSection("contact")}
@@ -59,13 +71,6 @@ export default function Footer() {
               </button>
 
               <a
-                href={`tel:${COMPANY_PHONE_TEL}`}
-                className="inline-flex items-center justify-center rounded-xl bg-white/5 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/10 transition"
-              >
-                Ligar
-              </a>
-
-              <a
                 href={`https://wa.me/${COMPANY_WA}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -73,6 +78,31 @@ export default function Footer() {
               >
                 WhatsApp
               </a>
+
+              {/* Redes sociais (apenas aqui, sem duplicar em "Contactos") */}
+              <div className="flex items-center gap-2">
+                <a
+                  href={COMPANY_LINKEDIN}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn Grupo Diâmetro"
+                  title="LinkedIn"
+                  className="inline-flex items-center justify-center rounded-xl bg-white/5 px-3 py-2.5 text-white hover:bg-white/10 transition ring-1 ring-white/10"
+                >
+                  <Linkedin size={18} />
+                </a>
+
+                <a
+                  href={COMPANY_INSTAGRAM}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram Grupo Diâmetro"
+                  title="Instagram"
+                  className="inline-flex items-center justify-center rounded-xl bg-white/5 px-3 py-2.5 text-white hover:bg-white/10 transition ring-1 ring-white/10"
+                >
+                  <Instagram size={18} />
+                </a>
+              </div>
             </div>
           </div>
 
@@ -131,7 +161,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contacts */}
+          {/* Contacts (somente o essencial) */}
           <div>
             <h3 className="text-sm font-extrabold tracking-wide uppercase text-white/90">
               Contactos
