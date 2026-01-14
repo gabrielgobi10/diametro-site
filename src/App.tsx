@@ -12,6 +12,7 @@ import Footer from "./components/Footer";
 
 import Privacy from "./components/Privacy";
 import Terms from "./components/Terms";
+import ObrasPage from "./components/ObrasPage";
 
 function HomePage({
   activeSection,
@@ -85,21 +86,26 @@ export default function App() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [location.pathname]);
 
+  const scrollToSection = useCallback((section: string) => {
+    const element = document.getElementById(section);
+    if (!element) return;
+
+    const offsetTop = element.offsetTop - 80;
+    window.scrollTo({ top: offsetTop, behavior: "smooth" });
+  }, []);
+
   const handleNavigate = useCallback(
     (section: string) => {
-      // Se não estiver na home, vai primeiro para "/" e depois faz scroll
+      // Se não estiver na home, vai para "/" e depois faz scroll
       if (location.pathname !== "/") {
         navigate(`/#${section}`);
+        // Observação: o scroll real acontece no useEffect do hash quando cair na home
         return;
       }
 
-      const element = document.getElementById(section);
-      if (!element) return;
-
-      const offsetTop = element.offsetTop - 80;
-      window.scrollTo({ top: offsetTop, behavior: "smooth" });
+      scrollToSection(section);
     },
-    [location.pathname, navigate]
+    [location.pathname, navigate, scrollToSection]
   );
 
   // Quando cair em "/#secao", faz o scroll automaticamente
@@ -109,12 +115,11 @@ export default function App() {
     const hash = location.hash?.replace("#", "");
     if (!hash) return;
 
-    const el = document.getElementById(hash);
-    if (!el) return;
-
-    const offsetTop = el.offsetTop - 80;
-    window.scrollTo({ top: offsetTop, behavior: "smooth" });
-  }, [location.pathname, location.hash]);
+    // Espera um tick para garantir que os componentes já renderizaram
+    requestAnimationFrame(() => {
+      scrollToSection(hash);
+    });
+  }, [location.pathname, location.hash, scrollToSection]);
 
   const handleContactClick = useCallback(() => {
     handleNavigate("contact");
@@ -131,6 +136,15 @@ export default function App() {
               onNavigate={handleNavigate}
               onContactClick={handleContactClick}
             />
+          }
+        />
+
+        <Route
+          path="/obras"
+          element={
+            <PageShell activeSection={"projects"} onNavigate={handleNavigate}>
+              <ObrasPage />
+            </PageShell>
           }
         />
 

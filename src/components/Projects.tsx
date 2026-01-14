@@ -4,7 +4,7 @@ import SalasTecnicas from "../assets/salas-tecnicas.jpg";
 import InstalacoesEmpresas from "../assets/instalacoes-empresas.jpg";
 import ManutencaoReparacoes from "../assets/manutencao-reparacoes.jpg";
 import EnsaiosConformidade from "../assets/ensaios-conformidade.png";
-
+import { useNavigate } from "react-router-dom";
 
 const areas = [
   {
@@ -58,6 +58,8 @@ const areas = [
 ];
 
 export default function Projects() {
+  const navigate = useNavigate();
+
   return (
     <section id="projects" className="bg-gray-50 py-14 sm:py-18 lg:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -75,6 +77,38 @@ export default function Projects() {
           <p className="mt-2 text-xs sm:text-sm text-gray-500">
             Portfólio e referências disponíveis mediante pedido.
           </p>
+
+          {/* CTA: Obras executadas */}
+          <div className="mt-6 flex items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => navigate("/obras")}
+              className={[
+                "inline-flex items-center justify-center",
+                "rounded-2xl px-5 py-3",
+                "text-sm font-extrabold",
+                "bg-[#0B4F8A] text-white",
+                "shadow-md shadow-[#0B4F8A]/20",
+                "hover:brightness-110 transition",
+              ].join(" ")}
+            >
+              Ver obras executadas
+            </button>
+
+            <a
+              href="#contact"
+              className={[
+                "inline-flex items-center justify-center",
+                "rounded-2xl px-5 py-3",
+                "text-sm font-extrabold",
+                "bg-white text-[#0B4F8A]",
+                "border border-[#0B4F8A]/15",
+                "hover:bg-[#0B4F8A]/5 transition",
+              ].join(" ")}
+            >
+              Pedir contacto
+            </a>
+          </div>
         </div>
 
         {/* Grid */}
