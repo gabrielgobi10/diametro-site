@@ -15,7 +15,7 @@ export default function Terms() {
   // Dados (alinhados com Footer/Privacy)
   const COMPANY_NAME = "Diâmetro Canalizações";
   const COMPANY_NIF = "517731622";
-  const COMPANY_EMAIL = "orcamentos@diametrocanalizacoes.com";
+  const COMPANY_EMAIL = "orcamentos@grupodiametro.pt";
   const COMPANY_PHONE_DISPLAY = "+351 939 555 074";
   const COMPANY_PHONE_TEL = "351939555074";
 

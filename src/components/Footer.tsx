@@ -17,7 +17,7 @@ export default function Footer() {
   const COMPANY_PHONE_DISPLAY = "+351 939 555 074";
   const COMPANY_PHONE_TEL = "351939555074"; // tel: (sem +)
   const COMPANY_WA = "351939555074"; // wa.me (sem + e sem espaços)
-  const COMPANY_EMAIL = "orcamentos@diametrocanalizacoes.com";
+  const COMPANY_EMAIL = "orcamentos@grupodiametro.pt";
 
   // Redes sociais
   const COMPANY_LINKEDIN =

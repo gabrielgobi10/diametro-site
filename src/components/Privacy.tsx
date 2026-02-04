@@ -7,7 +7,7 @@ export default function Privacy() {
   // Dados (os mesmos do teu Footer)
   const COMPANY_NAME = "Diâmetro Canalizações";
   const COMPANY_NIF = "517731622";
-  const COMPANY_EMAIL = "orcamentos@diametrocanalizacoes.com";
+  const COMPANY_EMAIL = "orcamentos@grupodiametro.pt";
   const COMPANY_PHONE_DISPLAY = "+351 939 555 074";
 
   return (

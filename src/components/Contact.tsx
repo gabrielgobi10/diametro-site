@@ -15,11 +15,21 @@ export default function Contact() {
   const COMPANY_PHONE_DISPLAY = "+351 939 555 074";
   const COMPANY_PHONE_TEL = "351939555074"; // tel: (sem +)
   const COMPANY_WA = "351939555074"; // wa.me (sem + e sem espaços)
-  const COMPANY_EMAIL = "orcamentos@diametrocanalizacoes.com";
 
-  // Formspree endpoint (o que aparece no seu painel)
-  const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqeazyqy";
+  // ✅ EMAIL NOVO (UI + mailto)
+  const COMPANY_EMAIL = "orcamentos@grupodiametro.pt";
 
+  /**
+   * ⚠️ IMPORTANTE (sem enrolação):
+   * Este endpoint define para onde o formulário é enviado.
+   * Trocar COMPANY_EMAIL NÃO muda o destino do formulário.
+   *
+   * Para o formulário cair no email novo, você precisa:
+   * - OU alterar o "recipient" deste form dentro do Formspree
+   * - OU criar um novo form no Formspree e trocar o endpoint abaixo
+   */
+  const FORMSPREE_ENDPOINT = "https://formspree.io/f/xeezybgj";
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -43,7 +53,7 @@ export default function Contact() {
     ].join("\n");
 
     return `https://wa.me/${COMPANY_WA}?text=${encodeURIComponent(txt)}`;
-  }, [formData]);
+  }, [formData, COMPANY_WA]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,6 +75,9 @@ export default function Contact() {
           phone: formData.phone,
           company: formData.company,
           message: formData.message,
+
+          // opcional (ajuda no Formspree / logs)
+          _subject: `Novo contacto (Site) — ${formData.name || "Sem nome"}`,
         }),
       });
 
@@ -233,14 +246,10 @@ export default function Contact() {
                     )}
                     <div>
                       {status === "success" ? (
-                        <>
-                          Mensagem enviada com sucesso. Entraremos em contacto em
-                          breve.
-                        </>
+                        <>Mensagem enviada com sucesso. Entraremos em contacto em breve.</>
                       ) : (
                         <>
-                          Não foi possível enviar agora. Tente novamente ou use
-                          o WhatsApp.
+                          Não foi possível enviar agora. Tente novamente ou use o WhatsApp.
                         </>
                       )}
                     </div>
@@ -292,8 +301,7 @@ export default function Contact() {
               </div>
 
               <p className="mt-4 text-xs text-gray-500 leading-relaxed">
-                Ao submeter, concorda em ser contactado pela nossa equipa para
-                dar seguimento ao pedido.
+                Ao submeter, concorda em ser contactado pela nossa equipa para dar seguimento ao pedido.
               </p>
             </form>
           </div>
@@ -305,9 +313,7 @@ export default function Contact() {
               title="Telefone"
               accent="bg-[#F5A623]"
             >
-              <p className="text-gray-600 font-semibold">
-                {COMPANY_PHONE_DISPLAY}
-              </p>
+              <p className="text-gray-600 font-semibold">{COMPANY_PHONE_DISPLAY}</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 <a
                   href={`tel:${COMPANY_PHONE_TEL}`}
