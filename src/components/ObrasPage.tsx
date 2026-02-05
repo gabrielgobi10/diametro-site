@@ -51,7 +51,7 @@ type Obra = {
   servicos: string[];
   imagens: string[];
   tipo?: string;
-  notas?: string[]; // bullets curtos para “completinho”
+  notas?: string[];
 };
 
 // ✅ Stats “marketing”
@@ -78,7 +78,7 @@ const OBRAS: Obra[] = [
       "Apoio a frentes de obra",
     ],
     imagens: [
-      KingsCollegeSchoolCascais, // primeira “sem número”
+      KingsCollegeSchoolCascais,
       Kings2,
       Kings3,
       Kings4,
@@ -110,7 +110,7 @@ const OBRAS: Obra[] = [
       "Distribuição",
       "Substituições",
       "Correções técnicas",
-      "Acompanhamento em obra",
+      "Acompanhamento de obra",
     ],
     imagens: [Garridas1867],
     tipo: "Obra ativa",
@@ -260,6 +260,8 @@ export default function ObrasPage() {
     setSelected(obra);
     setActiveImg(0);
     document.body.style.overflow = "hidden";
+    // garante abertura "limpa" no mobile
+    window.scrollTo({ top: 0, behavior: "instant" as any });
   };
 
   const closeModal = () => {
@@ -267,11 +269,6 @@ export default function ObrasPage() {
     document.body.style.overflow = "";
   };
 
-  /**
-   * ✅ Ir para o Contact.tsx
-   * - Se já existir #contact nesta página, faz scroll direto.
-   * - Se não existir, navega para "/" e tenta scroll para #contact depois.
-   */
   const goToContact = () => {
     const tryScroll = () => {
       const el = document.getElementById("contact");
@@ -286,7 +283,6 @@ export default function ObrasPage() {
 
     navigate("/");
 
-    // aguarda o DOM montar (Home) e tenta scroll algumas vezes
     let tries = 0;
     const interval = setInterval(() => {
       tries += 1;
@@ -327,7 +323,6 @@ export default function ObrasPage() {
                   Ver lista de obras
                 </a>
 
-                {/* ✅ agora vai para Contact.tsx */}
                 <button
                   type="button"
                   onClick={goToContact}
@@ -342,7 +337,7 @@ export default function ObrasPage() {
               </p>
             </div>
 
-            {/* ✅ Stats (só Total 30+) */}
+            {/* Stats (só Total 30+) */}
             <div className="w-full lg:w-[420px]">
               <div className="rounded-2xl bg-white border border-gray-100 shadow-sm p-6">
                 <div className="text-xs font-extrabold text-gray-500 uppercase tracking-wide">
@@ -517,21 +512,6 @@ export default function ObrasPage() {
             ))}
           </div>
 
-          {/* Empty */}
-          {filtered.length === 0 && (
-            <div className="mt-8 rounded-2xl border border-gray-200 bg-white p-8 text-center">
-              <div className="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-50 border border-gray-200">
-                <Search size={20} className="text-gray-500" />
-              </div>
-              <h4 className="mt-4 text-lg font-extrabold text-[#1E1E1E]">
-                Nenhuma obra encontrada
-              </h4>
-              <p className="mt-2 text-sm text-gray-600">
-                Ajuste os filtros ou tente outra pesquisa.
-              </p>
-            </div>
-          )}
-
           {/* CTA bottom */}
           <div className="mt-10 rounded-2xl bg-[#0B4F8A] text-white p-6 sm:p-8 overflow-hidden relative">
             <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
@@ -546,7 +526,6 @@ export default function ObrasPage() {
               </div>
 
               <div className="flex gap-3 w-full lg:w-auto">
-                {/* ✅ agora vai para Contact.tsx */}
                 <button
                   type="button"
                   onClick={goToContact}
@@ -567,7 +546,7 @@ export default function ObrasPage() {
         </div>
       </section>
 
-      {/* Modal */}
+      {/* ✅ Modal (corrigido para mobile) */}
       {selected && (
         <div className="fixed inset-0 z-[999]">
           <button
@@ -576,166 +555,172 @@ export default function ObrasPage() {
             aria-label="Fechar"
           />
 
-          <div className="absolute inset-x-0 top-10 sm:top-14 mx-auto w-[94%] max-w-5xl">
-            <div className="rounded-2xl overflow-hidden bg-white border border-gray-200 shadow-2xl">
-              {/* Header */}
-              <div className="flex items-start justify-between gap-3 p-4 sm:p-6 border-b border-gray-200">
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full px-3 py-1 text-[11px] font-extrabold tracking-wide uppercase bg-[#0B4F8A]/10 text-[#0B4F8A]">
-                      {selected.categoria}
-                    </span>
-                    <span
-                      className={classNames(
-                        "rounded-full px-3 py-1 text-[11px] font-extrabold tracking-wide uppercase",
-                        selected.status === "Concluída"
-                          ? "bg-emerald-500/10 text-emerald-700"
-                          : "bg-amber-500/10 text-amber-800"
-                      )}
-                    >
-                      {selected.status}
-                    </span>
-                    <span className="rounded-full px-3 py-1 text-[11px] font-extrabold tracking-wide uppercase bg-gray-100 text-gray-700">
-                      {selected.local}
-                    </span>
-                    <span className="rounded-full px-3 py-1 text-[11px] font-extrabold tracking-wide uppercase bg-gray-100 text-gray-700">
-                      {selected.periodo}
-                    </span>
+          <div className="absolute inset-x-0 top-4 sm:top-10 mx-auto w-[94%] max-w-5xl">
+            <div className="rounded-2xl overflow-hidden bg-white border border-gray-200 shadow-2xl max-h-[92vh] flex flex-col">
+              {/* Header sticky */}
+              <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+                <div className="flex items-start justify-between gap-3 p-4 sm:p-6">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-full px-3 py-1 text-[11px] font-extrabold tracking-wide uppercase bg-[#0B4F8A]/10 text-[#0B4F8A]">
+                        {selected.categoria}
+                      </span>
+
+                      <span
+                        className={classNames(
+                          "rounded-full px-3 py-1 text-[11px] font-extrabold tracking-wide uppercase",
+                          selected.status === "Concluída"
+                            ? "bg-emerald-500/10 text-emerald-700"
+                            : "bg-amber-500/10 text-amber-800"
+                        )}
+                      >
+                        {selected.status}
+                      </span>
+
+                      <span className="rounded-full px-3 py-1 text-[11px] font-extrabold tracking-wide uppercase bg-gray-100 text-gray-700">
+                        {selected.local}
+                      </span>
+
+                      <span className="rounded-full px-3 py-1 text-[11px] font-extrabold tracking-wide uppercase bg-gray-100 text-gray-700">
+                        {selected.periodo}
+                      </span>
+                    </div>
+
+                    <h3 className="mt-2 text-base sm:text-2xl font-extrabold tracking-tight text-[#1E1E1E] leading-tight">
+                      {selected.titulo}
+                    </h3>
+
+                    <p className="mt-2 text-sm text-gray-600 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                      {selected.resumo}
+                    </p>
                   </div>
 
-                  <h3 className="mt-2 text-lg sm:text-2xl font-extrabold tracking-tight text-[#1E1E1E] line-clamp-2">
-                    {selected.titulo}
-                  </h3>
-
-                  <p className="mt-2 text-sm text-gray-600 leading-relaxed">
-                    {selected.resumo}
-                  </p>
+                  <button
+                    onClick={closeModal}
+                    className="shrink-0 inline-flex items-center justify-center h-11 w-11 rounded-2xl border border-gray-200 hover:bg-gray-50 transition"
+                    aria-label="Fechar"
+                  >
+                    <X size={20} className="text-gray-800" />
+                  </button>
                 </div>
-
-                <button
-                  onClick={closeModal}
-                  className="shrink-0 inline-flex items-center justify-center h-11 w-11 rounded-2xl border border-gray-200 hover:bg-gray-50 transition"
-                  aria-label="Fechar"
-                >
-                  <X size={20} className="text-gray-800" />
-                </button>
               </div>
 
-              {/* Body */}
-              <div className="grid lg:grid-cols-5 gap-0">
-                {/* Gallery */}
-                <div className="lg:col-span-3 bg-black/5">
-                  <div className="relative">
-                    <div className="aspect-[16/10] w-full bg-black/10">
-                      {selected.imagens[activeImg] ? (
-                        <img
-                          src={selected.imagens[activeImg]}
-                          alt={`Imagem da obra ${activeImg + 1}`}
-                          className="h-full w-full object-cover"
-                          draggable={false}
-                        />
-                      ) : (
-                        <div className="h-full w-full flex items-center justify-center text-gray-500">
-                          <ImageIcon size={20} />
+              {/* Body com scroll interno */}
+              <div className="overflow-y-auto">
+                <div className="grid lg:grid-cols-5 gap-0">
+                  {/* Gallery */}
+                  <div className="lg:col-span-3 bg-black/5">
+                    <div className="relative">
+                      <div className="aspect-[16/10] w-full bg-black/10">
+                        {selected.imagens[activeImg] ? (
+                          <img
+                            src={selected.imagens[activeImg]}
+                            alt={`Imagem da obra ${activeImg + 1}`}
+                            className="h-full w-full object-cover"
+                            draggable={false}
+                          />
+                        ) : (
+                          <div className="h-full w-full flex items-center justify-center text-gray-500">
+                            <ImageIcon size={20} />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="absolute inset-x-0 bottom-0 h-[3px] bg-gradient-to-r from-[#0B4F8A] to-[#F5A623]" />
+                    </div>
+
+                    <div className="p-4 sm:p-6">
+                      <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto pb-2">
+                        {selected.imagens.map((img, idx) => (
+                          <button
+                            key={`${selected.id}-thumb-${idx}`}
+                            onClick={() => setActiveImg(idx)}
+                            className={classNames(
+                              "shrink-0 rounded-xl overflow-hidden border transition",
+                              idx === activeImg
+                                ? "border-[#0B4F8A] ring-2 ring-[#0B4F8A]/20"
+                                : "border-gray-200 hover:border-gray-300"
+                            )}
+                            aria-label={`Ver imagem ${idx + 1}`}
+                          >
+                            <img
+                              src={img}
+                              alt={`Thumb ${idx + 1}`}
+                              className="h-14 w-20 sm:h-16 sm:w-24 object-cover"
+                              draggable={false}
+                            />
+                          </button>
+                        ))}
+                      </div>
+                      <p className="mt-2 text-xs text-gray-500">
+                        Algumas imagens podem estar limitadas por autorização de divulgação.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Details */}
+                  <div className="lg:col-span-2 p-4 sm:p-6">
+                    <div className="rounded-2xl bg-gray-50 border border-gray-200 p-4">
+                      <div className="text-xs font-extrabold text-gray-600 uppercase tracking-wide">
+                        Serviços incluídos
+                      </div>
+
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {selected.servicos.map((s) => (
+                          <span
+                            key={`${selected.id}-${s}`}
+                            className="rounded-full bg-white border border-gray-200 text-gray-800 px-3 py-1 text-[12px] font-semibold"
+                          >
+                            {s}
+                          </span>
+                        ))}
+                      </div>
+
+                      {selected.tipo && (
+                        <div className="mt-4 text-sm text-gray-700">
+                          <span className="font-extrabold text-gray-900">Tipo:</span>{" "}
+                          {selected.tipo}
                         </div>
                       )}
                     </div>
 
-                    <div className="absolute inset-x-0 bottom-0 h-[3px] bg-gradient-to-r from-[#0B4F8A] to-[#F5A623]" />
-                  </div>
-
-                  <div className="p-4 sm:p-6">
-                    <div className="flex items-center gap-3 overflow-x-auto pb-2">
-                      {selected.imagens.map((img, idx) => (
-                        <button
-                          key={`${selected.id}-thumb-${idx}`}
-                          onClick={() => setActiveImg(idx)}
-                          className={classNames(
-                            "shrink-0 rounded-xl overflow-hidden border transition",
-                            idx === activeImg
-                              ? "border-[#0B4F8A] ring-2 ring-[#0B4F8A]/20"
-                              : "border-gray-200 hover:border-gray-300"
-                          )}
-                          aria-label={`Ver imagem ${idx + 1}`}
-                        >
-                          <img
-                            src={img}
-                            alt={`Thumb ${idx + 1}`}
-                            className="h-16 w-24 object-cover"
-                            draggable={false}
-                          />
-                        </button>
-                      ))}
-                    </div>
-                    <p className="mt-2 text-xs text-gray-500">
-                      Algumas imagens podem estar limitadas por autorização de divulgação.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Details */}
-                <div className="lg:col-span-2 p-4 sm:p-6">
-                  <div className="rounded-2xl bg-gray-50 border border-gray-200 p-4">
-                    <div className="text-xs font-extrabold text-gray-600 uppercase tracking-wide">
-                      Serviços incluídos
-                    </div>
-
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {selected.servicos.map((s) => (
-                        <span
-                          key={`${selected.id}-${s}`}
-                          className="rounded-full bg-white border border-gray-200 text-gray-800 px-3 py-1 text-[12px] font-semibold"
-                        >
-                          {s}
-                        </span>
-                      ))}
-                    </div>
-
-                    {selected.tipo && (
-                      <div className="mt-4 text-sm text-gray-700">
-                        <span className="font-extrabold text-gray-900">Tipo:</span>{" "}
-                        {selected.tipo}
+                    {selected.notas && selected.notas.length > 0 && (
+                      <div className="mt-4 rounded-2xl border border-gray-200 p-4">
+                        <div className="text-xs font-extrabold text-gray-600 uppercase tracking-wide">
+                          Destaques
+                        </div>
+                        <ul className="mt-3 space-y-2 text-sm text-gray-700">
+                          {selected.notas.map((n, i) => (
+                            <li key={`${selected.id}-nota-${i}`}>• {n}</li>
+                          ))}
+                        </ul>
                       </div>
                     )}
-                  </div>
 
-                  {/* Notas / info extra */}
-                  {selected.notas && selected.notas.length > 0 && (
-                    <div className="mt-4 rounded-2xl border border-gray-200 p-4">
-                      <div className="text-xs font-extrabold text-gray-600 uppercase tracking-wide">
-                        Destaques
-                      </div>
-                      <ul className="mt-3 space-y-2 text-sm text-gray-700">
-                        {selected.notas.map((n, i) => (
-                          <li key={`${selected.id}-nota-${i}`}>• {n}</li>
-                        ))}
-                      </ul>
+                    <div className="mt-4">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          closeModal();
+                          goToContact();
+                        }}
+                        className="w-full inline-flex items-center justify-center rounded-2xl bg-[#F5A623] text-white px-5 py-3 text-sm font-extrabold shadow-md shadow-[#F5A623]/25 hover:brightness-110 transition"
+                      >
+                        Pedir contacto sobre esta obra
+                      </button>
+
+                      <p className="mt-2 text-xs text-gray-500 text-center">
+                        Se necessário, enviamos referências e detalhes mediante pedido.
+                      </p>
                     </div>
-                  )}
 
-                  <div className="mt-4">
-                    {/* ✅ vai para Contact.tsx */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        closeModal();
-                        goToContact();
-                      }}
-                      className="w-full inline-flex items-center justify-center rounded-2xl bg-[#F5A623] text-white px-5 py-3 text-sm font-extrabold shadow-md shadow-[#F5A623]/25 hover:brightness-110 transition"
-                    >
-                      Pedir contacto sobre esta obra
-                    </button>
-
-                    <p className="mt-2 text-xs text-gray-500 text-center">
-                      Se necessário, enviamos referências e detalhes mediante pedido.
-                    </p>
+                    <div className="h-4 sm:h-0" />
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Safe bottom spacing */}
-            <div className="h-10" />
+            <div className="h-4 sm:h-10" />
           </div>
         </div>
       )}
