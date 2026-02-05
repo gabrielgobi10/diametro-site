@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   X,
   Search,
@@ -10,13 +10,26 @@ import {
   Image as ImageIcon,
 } from "lucide-react";
 
-// Reaproveita imagens que você já tem (depois você troca por fotos reais)
-import CanalizacaoEmEdificios from "../assets/canalizacao-edificios.jpg";
-import RedesInteriores from "../assets/redes-interiores.jpg";
-import SalasTecnicas from "../assets/salas-tecnicas.jpg";
-import InstalacoesEmpresas from "../assets/instalacoes-empresas.jpg";
-import ManutencaoReparacoes from "../assets/manutencao-reparacoes.jpg";
-import EnsaiosConformidade from "../assets/ensaios-conformidade.png";
+// ✅ Fotos reais (pasta: src/assets/obras/)
+// King’s (principal sem número + 2..10)
+import KingsCollegeSchoolCascais from "../assets/obras/kings-college-school-cascais.jpg";
+import Kings2 from "../assets/obras/kings-college-school-cascais-2.jpg";
+import Kings3 from "../assets/obras/kings-college-school-cascais-3.jpg";
+import Kings4 from "../assets/obras/kings-college-school-cascais-4.jpg";
+import Kings5 from "../assets/obras/kings-college-school-cascais-5.jpg";
+import Kings6 from "../assets/obras/kings-college-school-cascais-6.jpg";
+import Kings7 from "../assets/obras/kings-college-school-cascais-7.jpg";
+import Kings8 from "../assets/obras/kings-college-school-cascais-8.jpg";
+import Kings9 from "../assets/obras/kings-college-school-cascais-9.jpg";
+import Kings10 from "../assets/obras/kings-college-school-cascais-10.jpg";
+
+// Outras obras
+import Garridas1867 from "../assets/obras/garridas-1867.jpg";
+import BayviewCascaisBay from "../assets/obras/bayview-cascais-bay.jpg";
+import BayviewExtra1 from "../assets/obras/bayview-cascais-bay-1.jpeg";
+import ForumMunicipalOeiras from "../assets/obras/forum-municipal-oeiras.jpg";
+import SandWoods from "../assets/obras/sandwoods.jpg";
+import Vivva1080Setubal from "../assets/obras/1080-vivva-setubal.jpg";
 
 type ObraStatus = "Em execução" | "Concluída";
 type ObraCategoria =
@@ -32,96 +45,158 @@ type Obra = {
   titulo: string;
   status: ObraStatus;
   categoria: ObraCategoria;
-  local: string; // cidade / zona
-  periodo: string; // "2025" ou "Jan 2026" etc.
+  local: string;
+  periodo: string;
   resumo: string;
   servicos: string[];
-  // fotos (urls locais/imports por enquanto)
   imagens: string[];
-  // opcional: cliente (use só se tiver autorização)
-  cliente?: string;
-  // opcional: tipo de obra / segmento
   tipo?: string;
+  notas?: string[]; // bullets curtos para “completinho”
 };
 
+// ✅ Stats “marketing”
+const STATS_OVERRIDE = {
+  totalLabel: "30+",
+};
+
+// ✅ As 6 obras que vão aparecer por enquanto
 const OBRAS: Obra[] = [
   {
-    id: "obra-001",
-    titulo: "Canalização técnica em edifício residencial",
+    id: "obra-kings-college-school-cascais",
+    titulo: "King’s College School, Cascais",
     status: "Concluída",
     categoria: "Construção Civil",
-    local: "Lisboa",
+    local: "Cascais",
     periodo: "2025",
     resumo:
-      "Execução de prumadas e ligações técnicas com acabamento e testes finais.",
-    servicos: ["Prumadas", "Ramais", "Ligações", "Testes finais"],
-    imagens: [CanalizacaoEmEdificios, SalasTecnicas, EnsaiosConformidade],
-    tipo: "Residencial",
+      "Intervenções hidráulicas em contexto escolar: instalação e organização de redes, validações técnicas e entrega conforme boas práticas.",
+    servicos: [
+      "Redes de águas",
+      "Redes de esgotos",
+      "Montagens técnicas",
+      "Testes e verificação",
+      "Apoio a frentes de obra",
+    ],
+    imagens: [
+      KingsCollegeSchoolCascais, // primeira “sem número”
+      Kings2,
+      Kings3,
+      Kings4,
+      Kings5,
+      Kings6,
+      Kings7,
+      Kings8,
+      Kings9,
+      Kings10,
+    ],
+    tipo: "Educação (escola)",
+    notas: [
+      "Execução por zonas e fases, com coordenação em obra",
+      "Organização e identificação de linhas para manutenção futura",
+      "Ensaios e validações finais antes de entrega",
+    ],
   },
   {
-    id: "obra-002",
-    titulo: "Redes interiores (águas e esgotos) – reabilitação",
+    id: "obra-garridas-1867",
+    titulo: "Garridas 1867",
     status: "Em execução",
     categoria: "Infraestruturas",
-    local: "Cascais",
-    periodo: "Jan 2026",
-    resumo:
-      "Substituição de redes internas, ligação de pontos e distribuição com conformidade.",
-    servicos: ["Água", "Esgotos", "Distribuição", "Substituições"],
-    imagens: [RedesInteriores, ManutencaoReparacoes, EnsaiosConformidade],
-    tipo: "Reabilitação",
-  },
-  {
-    id: "obra-003",
-    titulo: "Salas técnicas e coletoras – instalação e montagem",
-    status: "Concluída",
-    categoria: "Técnico",
-    local: "Porto",
-    periodo: "2025",
-    resumo:
-      "Montagem de tubagens, válvulas e coletoras em salas técnicas com organização e segurança.",
-    servicos: ["Coletoras", "Válvulas", "Tubagens", "Organização técnica"],
-    imagens: [SalasTecnicas, InstalacoesEmpresas, EnsaiosConformidade],
-    tipo: "Técnico",
-  },
-  {
-    id: "obra-004",
-    titulo: "Instalações para espaço comercial",
-    status: "Concluída",
-    categoria: "Comercial",
-    local: "Coimbra",
-    periodo: "2025",
-    resumo:
-      "Canalização para ambiente empresarial com planeamento, prazos e conformidade.",
-    servicos: ["Instalação", "Adequações", "Conformidade", "Entrega técnica"],
-    imagens: [InstalacoesEmpresas, ManutencaoReparacoes, EnsaiosConformidade],
-    tipo: "Comercial",
-  },
-  {
-    id: "obra-005",
-    titulo: "Manutenção preventiva e reparações programadas",
-    status: "Em execução",
-    categoria: "Serviços",
     local: "Lisboa",
     periodo: "2026",
     resumo:
-      "Intervenções recorrentes, correções e substituições com registo e acompanhamento.",
-    servicos: ["Manutenção", "Correções", "Substituições", "Assistência"],
-    imagens: [ManutencaoReparacoes, RedesInteriores, EnsaiosConformidade],
-    tipo: "Serviços",
+      "Trabalhos de canalização/hidráulica em obra ativa, com acompanhamento por frentes e foco em prazos, qualidade e segurança.",
+    servicos: [
+      "Redes interiores",
+      "Distribuição",
+      "Substituições",
+      "Correções técnicas",
+      "Acompanhamento em obra",
+    ],
+    imagens: [Garridas1867],
+    tipo: "Obra ativa",
+    notas: [
+      "Acompanhamento contínuo e registo de progresso",
+      "Execução com controlo de qualidade por etapa",
+      "Preparação para testes e validações finais",
+    ],
   },
   {
-    id: "obra-006",
-    titulo: "Ensaios e conformidade – testes e verificação",
+    id: "obra-bayview-cascais-bay",
+    titulo: "Bayview Cascais Bay",
+    status: "Em execução",
+    categoria: "Construção Civil",
+    local: "Cascais",
+    periodo: "2026",
+    resumo:
+      "Execução de redes hidráulicas em ambiente residencial, com montagem faseada e verificação de estanqueidade.",
+    servicos: [
+      "Prumadas",
+      "Ramais",
+      "Montagem",
+      "Testes",
+      "Ajustes e acabamentos",
+    ],
+    imagens: [BayviewCascaisBay, BayviewExtra1],
+    tipo: "Residencial",
+    notas: [
+      "Execução por fases para compatibilizar com outras especialidades",
+      "Ensaios de estanqueidade e validações em campo",
+      "Organização técnica para facilitar manutenção",
+    ],
+  },
+  {
+    id: "obra-forum-municipal-oeiras",
+    titulo: "Fórum Municipal de Oeiras",
     status: "Concluída",
-    categoria: "Qualidade",
-    local: "Portugal",
+    categoria: "Técnico",
+    local: "Oeiras",
     periodo: "2025",
     resumo:
-      "Testes, verificação e entrega técnica conforme normas e boas práticas.",
-    servicos: ["Testes", "Verificação", "Relatórios", "Conformidade"],
-    imagens: [EnsaiosConformidade, SalasTecnicas, CanalizacaoEmEdificios],
-    tipo: "Qualidade",
+      "Intervenções técnicas em redes e pontos hidráulicos, com foco em organização, segurança e conformidade na entrega.",
+    servicos: ["Redes interiores", "Adequações", "Verificação", "Entrega técnica"],
+    imagens: [ForumMunicipalOeiras],
+    tipo: "Equipamento municipal",
+    notas: [
+      "Trabalho técnico com atenção a normas e boas práticas",
+      "Verificações antes de entrega e documentação de apoio",
+      "Intervenções orientadas a operação e manutenção",
+    ],
+  },
+  {
+    id: "obra-sandwoods",
+    titulo: "SandWoods",
+    status: "Concluída",
+    categoria: "Construção Civil",
+    local: "Cascais",
+    periodo: "2025",
+    resumo:
+      "Execução de redes hidráulicas e acabamentos técnicos, garantindo conformidade e qualidade final.",
+    servicos: ["Águas", "Esgotos", "Montagem", "Testes finais"],
+    imagens: [SandWoods],
+    tipo: "Residencial",
+    notas: [
+      "Foco em qualidade de montagem e acabamento",
+      "Validações finais e preparação para entrega",
+      "Compatibilização com outras equipas em obra",
+    ],
+  },
+  {
+    id: "obra-1080-vivva-setubal",
+    titulo: "1080 Vivva Setúbal",
+    status: "Em execução",
+    categoria: "Infraestruturas",
+    local: "Setúbal",
+    periodo: "2026",
+    resumo:
+      "Execução e acompanhamento de redes hidráulicas em obra ativa, com coordenação em campo e validações por etapa.",
+    servicos: ["Águas", "Esgotos", "Distribuição", "Acompanhamento de obra"],
+    imagens: [Vivva1080Setubal],
+    tipo: "Obra ativa",
+    notas: [
+      "Execução por frentes e planeamento semanal",
+      "Controlo de qualidade por etapa",
+      "Preparação para testes e comissionamento",
+    ],
   },
 ];
 
@@ -142,6 +217,8 @@ function classNames(...xs: Array<string | false | undefined | null>) {
 }
 
 export default function ObrasPage() {
+  const navigate = useNavigate();
+
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<ObraStatus | "Todos">("Todos");
   const [categoria, setCategoria] = useState<ObraCategoria | "Todas">("Todas");
@@ -149,11 +226,7 @@ export default function ObrasPage() {
   const [activeImg, setActiveImg] = useState(0);
 
   const stats = useMemo(() => {
-    const total = OBRAS.length;
-    const concluidas = OBRAS.filter((o) => o.status === "Concluída").length;
-    const execucao = OBRAS.filter((o) => o.status === "Em execução").length;
-    const cidades = new Set(OBRAS.map((o) => o.local)).size;
-    return { total, concluidas, execucao, cidades };
+    return { totalLabel: STATS_OVERRIDE.totalLabel };
   }, []);
 
   const filtered = useMemo(() => {
@@ -174,7 +247,7 @@ export default function ObrasPage() {
         o.resumo,
         o.tipo ?? "",
         ...(o.servicos ?? []),
-        o.cliente ?? "",
+        ...(o.notas ?? []),
       ]
         .join(" ")
         .toLowerCase();
@@ -192,6 +265,33 @@ export default function ObrasPage() {
   const closeModal = () => {
     setSelected(null);
     document.body.style.overflow = "";
+  };
+
+  /**
+   * ✅ Ir para o Contact.tsx
+   * - Se já existir #contact nesta página, faz scroll direto.
+   * - Se não existir, navega para "/" e tenta scroll para #contact depois.
+   */
+  const goToContact = () => {
+    const tryScroll = () => {
+      const el = document.getElementById("contact");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        return true;
+      }
+      return false;
+    };
+
+    if (tryScroll()) return;
+
+    navigate("/");
+
+    // aguarda o DOM montar (Home) e tenta scroll algumas vezes
+    let tries = 0;
+    const interval = setInterval(() => {
+      tries += 1;
+      if (tryScroll() || tries >= 20) clearInterval(interval);
+    }, 80);
   };
 
   return (
@@ -227,12 +327,14 @@ export default function ObrasPage() {
                   Ver lista de obras
                 </a>
 
-                <a
-                  href="#contact"
+                {/* ✅ agora vai para Contact.tsx */}
+                <button
+                  type="button"
+                  onClick={goToContact}
                   className="inline-flex items-center justify-center rounded-2xl bg-white px-6 py-3 text-sm font-extrabold text-[#0B4F8A] border border-[#0B4F8A]/15 hover:bg-[#0B4F8A]/5 transition"
                 >
                   Pedir orçamento
-                </a>
+                </button>
               </div>
 
               <p className="mt-4 text-xs text-gray-500">
@@ -240,41 +342,17 @@ export default function ObrasPage() {
               </p>
             </div>
 
-            {/* Stats */}
-            <div className="w-full lg:w-[420px] grid grid-cols-2 gap-3">
-              <div className="rounded-2xl bg-white border border-gray-100 shadow-sm p-5">
+            {/* ✅ Stats (só Total 30+) */}
+            <div className="w-full lg:w-[420px]">
+              <div className="rounded-2xl bg-white border border-gray-100 shadow-sm p-6">
                 <div className="text-xs font-extrabold text-gray-500 uppercase tracking-wide">
                   Total
                 </div>
-                <div className="mt-1 text-2xl font-extrabold text-[#1E1E1E]">
-                  {stats.total}
+                <div className="mt-2 text-4xl font-extrabold text-[#1E1E1E]">
+                  {stats.totalLabel}
                 </div>
-              </div>
-
-              <div className="rounded-2xl bg-white border border-gray-100 shadow-sm p-5">
-                <div className="text-xs font-extrabold text-gray-500 uppercase tracking-wide">
-                  Concluídas
-                </div>
-                <div className="mt-1 text-2xl font-extrabold text-[#1E1E1E]">
-                  {stats.concluidas}
-                </div>
-              </div>
-
-              <div className="rounded-2xl bg-white border border-gray-100 shadow-sm p-5">
-                <div className="text-xs font-extrabold text-gray-500 uppercase tracking-wide">
-                  Em execução
-                </div>
-                <div className="mt-1 text-2xl font-extrabold text-[#1E1E1E]">
-                  {stats.execucao}
-                </div>
-              </div>
-
-              <div className="rounded-2xl bg-white border border-gray-100 shadow-sm p-5">
-                <div className="text-xs font-extrabold text-gray-500 uppercase tracking-wide">
-                  Localizações
-                </div>
-                <div className="mt-1 text-2xl font-extrabold text-[#1E1E1E]">
-                  {stats.cidades}
+                <div className="mt-2 text-sm text-gray-600">
+                  Obras e intervenções realizadas (seleção parcial apresentada abaixo).
                 </div>
               </div>
             </div>
@@ -299,7 +377,7 @@ export default function ObrasPage() {
                   <input
                     value={q}
                     onChange={(e) => setQ(e.target.value)}
-                    placeholder="Ex: Lisboa, reabilitação, esgotos, coletoras..."
+                    placeholder="Ex: Cascais, escola, reabilitação, esgotos..."
                     className="w-full rounded-2xl border border-gray-200 bg-white pl-10 pr-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#0B4F8A]/25 focus:border-[#0B4F8A]/30"
                   />
                 </div>
@@ -468,12 +546,14 @@ export default function ObrasPage() {
               </div>
 
               <div className="flex gap-3 w-full lg:w-auto">
-                <a
-                  href="#contact"
+                {/* ✅ agora vai para Contact.tsx */}
+                <button
+                  type="button"
+                  onClick={goToContact}
                   className="w-full lg:w-auto inline-flex items-center justify-center rounded-2xl bg-white text-[#0B4F8A] px-6 py-3 text-sm font-extrabold hover:brightness-105 transition"
                 >
                   Pedir contacto
-                </a>
+                </button>
 
                 <Link
                   to="/"
@@ -588,7 +668,7 @@ export default function ObrasPage() {
                       ))}
                     </div>
                     <p className="mt-2 text-xs text-gray-500">
-                      Sugestão: substitua estas imagens por fotos reais desta obra (quando permitido).
+                      Algumas imagens podem estar limitadas por autorização de divulgação.
                     </p>
                   </div>
                 </div>
@@ -617,39 +697,38 @@ export default function ObrasPage() {
                         {selected.tipo}
                       </div>
                     )}
-
-                    {selected.cliente && (
-                      <div className="mt-2 text-sm text-gray-700">
-                        <span className="font-extrabold text-gray-900">Cliente:</span>{" "}
-                        {selected.cliente}
-                      </div>
-                    )}
                   </div>
 
+                  {/* Notas / info extra */}
+                  {selected.notas && selected.notas.length > 0 && (
+                    <div className="mt-4 rounded-2xl border border-gray-200 p-4">
+                      <div className="text-xs font-extrabold text-gray-600 uppercase tracking-wide">
+                        Destaques
+                      </div>
+                      <ul className="mt-3 space-y-2 text-sm text-gray-700">
+                        {selected.notas.map((n, i) => (
+                          <li key={`${selected.id}-nota-${i}`}>• {n}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   <div className="mt-4">
-                    <a
-                      href="#contact"
-                      onClick={closeModal}
+                    {/* ✅ vai para Contact.tsx */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        closeModal();
+                        goToContact();
+                      }}
                       className="w-full inline-flex items-center justify-center rounded-2xl bg-[#F5A623] text-white px-5 py-3 text-sm font-extrabold shadow-md shadow-[#F5A623]/25 hover:brightness-110 transition"
                     >
                       Pedir contacto sobre esta obra
-                    </a>
+                    </button>
 
                     <p className="mt-2 text-xs text-gray-500 text-center">
-                      Se quiser, enviamos referências e detalhes mediante pedido.
+                      Se necessário, enviamos referências e detalhes mediante pedido.
                     </p>
-                  </div>
-
-                  <div className="mt-6 rounded-2xl border border-gray-200 p-4">
-                    <div className="text-xs font-extrabold text-gray-600 uppercase tracking-wide">
-                      Organização recomendada
-                    </div>
-                    <ul className="mt-3 space-y-2 text-sm text-gray-700">
-                      <li>• Estado: em execução / concluída</li>
-                      <li>• Localização: cidade / zona</li>
-                      <li>• Categoria: tipo de serviço</li>
-                      <li>• Fotos: apenas se autorizado</li>
-                    </ul>
                   </div>
                 </div>
               </div>
